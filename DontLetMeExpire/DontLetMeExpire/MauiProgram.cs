@@ -5,6 +5,7 @@ using DontLetMeExpire.Services;
 using DontLetMeExpire.ViewModels;
 using DontLetMeExpire.Views;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace DontLetMeExpire
 {
@@ -15,6 +16,7 @@ namespace DontLetMeExpire
       var builder = MauiApp.CreateBuilder();
       builder
         .UseMauiApp<App>()
+        .ConfigureSyncfusionToolkit()
         .UseMauiCommunityToolkit()
         .UseMauiCameraView() // Camera.Maui
         .ConfigureFonts(fonts =>

@@ -1,4 +1,5 @@
 ﻿using DontLetMeExpire.Models;
+using DontLetMeExpire.Resources.Strings;
 using DontLetMeExpire.Services;
 using DontLetMeExpire.Views;
 using System.Collections.ObjectModel;
@@ -83,24 +84,58 @@ public class MainViewModel : ViewModelBase
 
   public ObservableCollection<StorageLocationWithItemCount> StorageLocations { get; } = [];
 
+  public ObservableCollection<ConditionWithCount> ConditionsWithCount { get; } = [];
+
   /// <summary>
   /// Initialisiert das ViewModel asynchron.
   /// </summary>
   public async Task InitializeAsync()
   {
-    var locations = await _storageLocationService.GetWithItemCountAsync();
 
-    StorageLocations.Clear();
-    foreach (var location in locations)
+    try
     {
-      StorageLocations.Add(location);
-    }
+      IsLoading = true;
+      var locations = await _storageLocationService.GetWithItemCountAsync();
+      StorageLocations.Clear();
 
-    StockCount = (await _itemService.GetAsync()).Count();
-    ExpiringSoonCount = (await _itemService.GetExpiresSoonAsync()).Count();
-    ExpiresTodayCount = (await _itemService.GetExpiresTodayAsync()).Count();
-    ExpiredCount = (await _itemService.GetExpiredAsync()).Count();
-    ((Command)NavigateToAddItemCommand).ChangeCanExecute();
+      // //HACK: Add Dummy Locations for Shimmer Effect in UI
+      StorageLocations.Add(new StorageLocationWithItemCount());
+      StorageLocations.Add(new StorageLocationWithItemCount());
+      StorageLocations.Add(new StorageLocationWithItemCount());
+
+      // Ladezeit simulieren
+      await Task.Delay(3000);                 
+
+
+      StorageLocations.Clear();
+      foreach (var location in locations)
+      {
+        StorageLocations.Add(location);
+      }
+
+      StockCount = (await _itemService.GetAsync()).Count();
+      ExpiringSoonCount = (await _itemService.GetExpiresSoonAsync()).Count();
+      ExpiresTodayCount = (await _itemService.GetExpiresTodayAsync()).Count();
+      ExpiredCount = (await _itemService.GetExpiredAsync()).Count();
+
+      // calculate the stock that is not expiring soon , expires today or is already expired
+      var myStockCount = StockCount - ExpiringSoonCount - ExpiresTodayCount - ExpiredCount;
+
+
+
+      ConditionsWithCount.Clear();
+      ConditionsWithCount.Add(new ConditionWithCount(AppResources.ExpiringSoon, ExpiringSoonCount));
+      ConditionsWithCount.Add(new ConditionWithCount(AppResources.ExpiresToday, ExpiresTodayCount));
+      ConditionsWithCount.Add(new ConditionWithCount(AppResources.Expired, ExpiredCount));
+      ConditionsWithCount.Add(new ConditionWithCount(AppResources.MyStock, myStockCount));
+
+      ((Command)NavigateToAddItemCommand).ChangeCanExecute();
+
+    }
+    finally
+    {
+      IsLoading = false;
+    }
   }
 
   private async Task NavigateToStock()
@@ -173,3 +208,5 @@ public class MainViewModel : ViewModelBase
     await InitializeAsync();
   }
 }
+
+public record ConditionWithCount(string Condition, int Count);

@@ -8,6 +8,8 @@ namespace DontLetMeExpire.ViewModels;
 /// </summary>
 public abstract class ViewModelBase : INotifyPropertyChanged
 {
+    private bool _isLoading;
+
     /// <summary>
     /// Event that is raised when a property value changes.
     /// </summary>
@@ -60,5 +62,12 @@ public abstract class ViewModelBase : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         callback.Invoke();
         return true;
+    }
+
+
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set => SetProperty(ref _isLoading, value);
     }
 }

@@ -29,8 +29,11 @@ public partial class DashboardTile : ContentView
   public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand),
          typeof(DashboardTile));
 
+    public static readonly BindableProperty IsLoadingProperty = BindableProperty.Create(nameof(IsLoading), typeof(bool),
+        typeof(DashboardTile), default(bool));
 
-  public DashboardTile()
+
+    public DashboardTile()
 	{
 		InitializeComponent();
 	}
@@ -82,4 +85,10 @@ public partial class DashboardTile : ContentView
     get => (int)GetValue(CountProperty);
     set => SetValue(CountProperty, value);
   }
+
+    public bool IsLoading
+    {
+        get => (bool)GetValue(IsLoadingProperty);
+        set => SetValue(IsLoadingProperty, value);
+    }
 }
