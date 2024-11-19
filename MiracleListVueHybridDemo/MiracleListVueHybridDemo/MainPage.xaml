@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MiracleListVueHybridDemo.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ScrollView>
+
+        <Grid RowDefinitions="auto, *" ColumnDefinitions="*,auto">
+            
+                <Entry
+                    x:Name="messageText"
+                    Grid.Column="0"
+                    Placeholder="Bitte Nachricht eintragen" />
+                <Button
+                    Clicked="OnSendMessageButtonClicked"
+                    Grid.Column="1"
+                    Text="Senden" />
+            
+            <HybridWebView
+                x:Name="hybridWebView"
+                Grid.Row="1"
+                RawMessageReceived="OnHybridWebViewRawMessageReceived" />
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
